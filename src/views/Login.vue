@@ -14,28 +14,50 @@
   </el-form>
 </template>
 <script>
+import api from '../api/api'
+
 export default {
-  data: () => ({
-    loading: false,
-    checked: true,
-    loginForm: {
-      userName: 'admin',
-      password: 'pasword'
-    },
-    rules: {
-      userName: [
-        { required: true, message: '请输入账号', trigger: 'blur' }
-      ],
-      password: [
-        { required: true, message: '请输入密码', trigger: 'blur' }
-      ]
+  data() {
+    return {
+      loading: false,
+      checked: true,
+      loginForm: {
+        userName: 'admin',
+        password: '123123'
+      },
+      rules: {
+        userName: [
+          { required: true, message: '请输入账号', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ]
+      }
     }
-  }),
+  },
   methods: {
     handleSubmit() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          console.log('suc');
+          this.loading = true;
+          var form = this.loginForm;
+          var param = {
+            userName: form.userName,
+            password: form.password
+          };
+          api.requestLogin(param).then(data => {
+            this.loading = false;
+            var { msg, code, user } = data;
+            if (code !== 200) {
+              this.$message({
+                message: msg,
+                type: 'error'
+              });
+            } else {
+              sessionStorage.setItem('user', JSON.stringify(user));
+              this.$router.push({ path: '/table' });
+            }
+          });
         } else {
           return false;
         }
