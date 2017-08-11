@@ -14,7 +14,7 @@
   </el-form>
 </template>
 <script>
-import api from '../api/api'
+import { requestLogin } from '../api/api'
 
 export default {
   data() {
@@ -45,7 +45,7 @@ export default {
             userName: form.userName,
             password: form.password
           };
-          api.requestLogin(param).then(data => {
+          requestLogin(param).then(data => {
             this.loading = false;
             var { msg, code, user } = data;
             if (code !== 200) {

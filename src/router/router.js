@@ -15,8 +15,16 @@ var router = new Router({
       name: '表格',
       path: '/table',
       component: require('../views/nav1/Table.vue')
-    }, {
-      name: '表格1',
+    }]
+  }, {
+    path: '/',
+    component: Home,
+    name: '导航二',
+    iconCls: 'el-icon-message',
+    type: 'nav',
+    leaf: true,
+    children: [{
+      name: '表格2-1',
       path: '/table1',
       component: require('../views/nav1/Table.1.vue')
     }]

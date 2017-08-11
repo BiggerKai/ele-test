@@ -27,32 +27,66 @@
         </el-col>
       </el-row>
     </header>
-    <div class="main">
+    <el-col :span="24" class="main">
       <nav>
-        <el-menu :default-active="$route.path" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" @select="handleselect" unique-opened router>
+        <el-menu :default-active="$route.path" class="el-menu-vertical-demo" v-show="!collapsed" @open="handleOpen" @close="handleClose" @select="handleselect" unique-opened router>
           <template v-for="(item, index) in $router.options.routes" v-if="item.type == 'nav'">
-            <el-submenu :index="item.path">
+            <el-submenu :index="item.path" v-if="!item.leaf">
               <template slot="title">
                 <i :class="item.iconCls"></i>{{item.name}}</template>
               <el-menu-item v-for="child in item.children" :index="child.path" :key="child.path">
                 {{child.name}}
               </el-menu-item>
             </el-submenu>
+            <el-menu-item :index="item.children[0].path" v-if="item.leaf">
+              <i :class="item.iconCls"></i>{{item.children[0].name}}
+            </el-menu-item>
           </template>
         </el-menu>
+        <ul class="el-menu el-menu-vertical-demo collapsed" v-show="collapsed" ref="menuCollapsed">
+          <li v-for="(item, index) in $router.options.routes" v-if="!item.hidden" class="el-submenu item">
+            <template v-if="!item.leaf">
+              <div class="el-submenu__title" style="padding-left: 20px;" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)">
+                <i :class="item.iconCls"></i>
+              </div>
+              <ul class="el-menu submenu" :class="'submenu-hook-'+index" @mouseover="showMenu(index,true)" @mouseout="showMenu(index,false)">
+                <li v-for="child in item.children" v-if="!child.hidden" :key="child.path" class="el-menu-item" style="padding-left: 40px;" :class="$route.path==child.path?'is-active':''" @click="$router.push(child.path)">{{child.name}}</li>
+              </ul>
+            </template>
+            <template v-else>
+              <li class="el-submenu">
+                <div class="el-submenu__title el-menu-item" style="padding-left: 20px;height: 56px;line-height: 56px;padding: 0 20px;" :class="$route.path==item.children[0].path?'is-active':''" @click="$router.push(item.children[0].path)">
+                  <i :class="item.iconCls"></i>
+                </div>
+              </li>
+            </template>
+          </li>
+        </ul>
       </nav>
       <aside>
-        <transition name="fade" mode="out-in">
-          <router-view></router-view>
-        </transition>
+        <div class="breadcrumb-container">
+          <strong class="title">{{$route.name}}</strong>
+          <el-breadcrumb separator="/" class="breadcrumb-inner">
+            <el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
+              {{ item.name }}
+            </el-breadcrumb-item>
+          </el-breadcrumb>
+        </div>
+        <div class="content-wrapper">
+          <transition name="fade" mode="out-in">
+            <router-view></router-view>
+          </transition>
+        </div>
       </aside>
-    </div>
+    </el-col>
+  
   </div>
 </template>
 <script>
 export default {
   data() {
     return {
+      isCollapse: false,
       routerInfo: {},
       show: true,
       sysName: 'ADMIN',
@@ -64,6 +98,9 @@ export default {
   methods: {
     collapse() {
       this.collapsed = !this.collapsed;
+    },
+    showMenu(i, status) {
+      this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-' + i)[0].style.display = status ? 'block' : 'none';
     },
     loginOut() {
       this.$confirm('确定退出？', '提示', {})
@@ -98,7 +135,10 @@ export default {
 <style lang="scss" scoped>
 @import '~scss_vars';
 .container {
-  height: 100%;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  width: 100%;
   header {
     height: 60px;
     line-height: 60px;
@@ -121,6 +161,7 @@ export default {
       cursor: pointer;
     }
     .user-info {
+      text-align: right;
       float: right;
       padding-right: 35px;
       .user-info-content {
@@ -137,12 +178,51 @@ export default {
     }
   }
   .main {
-    height: 100%;
+    display: flex;
+    position: absolute;
+    top: 60px;
+    bottom: 0px;
+    overflow: hidden;
     nav {
-      width: 230px;
-
       .el-menu {
         height: 100%;
+        width: 230px;
+      }
+      .collapsed {
+        width: 60px;
+        .item {
+          position: relative;
+        }
+        .submenu {
+          position: absolute;
+          top: 0px;
+          left: 60px;
+          z-index: 99999;
+          height: auto;
+          display: none;
+        }
+      }
+    }
+
+    aside {
+      padding: 20px;
+      overflow-y: scroll;
+      flex: 1;
+      .breadcrumb-container {
+        height: 16px;
+        .title {
+          width: 200px;
+          float: left;
+          color: #475669;
+        }
+
+        .breadcrumb-inner {
+          float: right;
+        }
+      }
+      .content-wrapper {
+        height: 100%;
+        box-sizing: border-box;
       }
     }
   }
