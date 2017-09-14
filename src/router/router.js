@@ -29,6 +29,42 @@ var router = new Router({
       component: require('../views/nav1/Table.1.vue')
     }]
   }, {
+    path: '/',
+    component: Home,
+    name: '导航三',
+    iconCls: 'el-icon-message',
+    type: 'nav',
+    leaf: true,
+    children: [{
+      name: '表格3-1',
+      path: '/table2',
+      component: require('../views/nav1/Table2.vue')
+    }]
+  }, {
+    path: '/',
+    component: Home,
+    name: '导航四',
+    iconCls: 'el-icon-message',
+    type: 'nav',
+    leaf: true,
+    children: [{
+      name: '表格4-1',
+      path: '/table3',
+      component: require('../views/nav1/Table3.vue')
+    }]
+  }, {
+    path: '/',
+    component: Home,
+    name: '导航五',
+    iconCls: 'el-icon-message',
+    type: 'nav',
+    leaf: true,
+    children: [{
+      name: '表格5-1',
+      path: '/table4',
+      component: require('../views/nav1/Table4.vue')
+    }]
+  }, {
     path: '/login',
     component: require('../views/Login.vue')
   }]
