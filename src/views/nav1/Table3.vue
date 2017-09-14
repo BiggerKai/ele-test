@@ -44,7 +44,6 @@ export default {
     this.canvas = canvas;
 
     this.drawGrid();
-
     canvas.onmousedown = this.onmousedown;
     canvas.onmouseup = this.onmouseup;
     canvas.onmouseout = this.onmouseout;
