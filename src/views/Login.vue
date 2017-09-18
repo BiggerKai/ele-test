@@ -68,7 +68,7 @@ export default {
 </script>
 <style lang="scss" scope>
 .login-form {
-  width: 350px;
+  width: 351px;
   margin: 150px auto;
   padding: 35px;
   border: 1px solid #eaeaea;
